@@ -313,7 +313,9 @@ title('(d)','FontSize',16,'FontName','Cambria')
 %%
 psol2=br_remove_extracolumns(psol2);
 save('par3_S4permutations.mat')
-%%
+%% No, we continue Hopf bifurcation in (tau_s,delta)-space
+% Then we fix delta and continue one-parameter continuation in tau_c for
+% periodic solutions
 parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0; in.delta,-2],...
     'max_bound',[in.c_ext,3;in.tau_s,4; in.tau_c,4; in.delta,2],...
     'max_step',[in.c_ext,0.05; in.tau_s,0.01;in.tau_c,0.01; in.delta,0.01; 0,0.01]};
