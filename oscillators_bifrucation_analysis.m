@@ -1,17 +1,17 @@
 clear;
-  base=[pwd(),'\..\..\DDE_Biftool_Feb2024\'];
-    addpath([base,'ddebiftool'],...
-            [base,'ddebiftool_extra_psol'],...
-            [base,'ddebiftool_utilities'],...
-            [base,'ddebiftool_extra_rotsym'],...
-            [base,'ddebiftool_extra_nmfm'],...
-            [base,'ddebiftool_extra_symbolic'],...
-            [base,'ddebiftool_coco']);
+base=[pwd(),'\..\..\DDE_Biftool_Feb2024\'];
+addpath([base,'ddebiftool'],...
+    [base,'ddebiftool_extra_psol'],...
+    [base,'ddebiftool_utilities'],...
+    [base,'ddebiftool_extra_rotsym'],...
+    [base,'ddebiftool_extra_nmfm'],...
+    [base,'ddebiftool_extra_symbolic'],...
+    [base,'ddebiftool_coco']);
 %%
 parnames={'a','c_ext','delta','tau_s','tau_c'};
 cind=[parnames;num2cell(1:length(parnames))];
 in=struct(cind{:});
-par([in.a,  in.c_ext, in.delta,  in.tau_s,  in.tau_c])=... 
+par([in.a,  in.c_ext, in.delta,  in.tau_s,  in.tau_c])=...
     [1,        1,        0,        0.025,     0.02];
 x0=[0;0;0;0];
 parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0],...
@@ -84,8 +84,8 @@ hold on; %grid on
 plot(par_axc(unst_indsc2==0),x0_axc(unst_indsc2==0),'-','Color','k','LineWidth',3)
 plot(par_axc(unst_indsc2==6),x0_axc(unst_indsc2==6),'k--','LineWidth',3);
 plot(par_axc(unst_indsc2>=7),x0_axc(unst_indsc2>=7),'.','Color',[0.7 0.7 0.7],'MarkerSize', 8,'LineWidth',2)
- plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 10, ...
-     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 10, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 xlim([0,1])
 ylim([-0.1,0.1])
 xticks([0,0.5,1])
@@ -120,9 +120,9 @@ figure(3)
 clf;
 hold on; grid on
 plot(x_tauc_hf(unst_hopf==0),x_taus_hf(unst_hopf==0),'k.','MarkerSize',10)
-    plot(x_tauc_hf(unst_hopf>=1),x_taus_hf(unst_hopf>=1),'.','MarkerSize',10)
-    legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',16)
-    ylabel('$\tau_{s}$','Interpreter','latex','FontName','Cambria',FontSize=22)
+plot(x_tauc_hf(unst_hopf>=1),x_taus_hf(unst_hopf>=1),'.','MarkerSize',10)
+legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',16)
+ylabel('$\tau_{s}$','Interpreter','latex','FontName','Cambria',FontSize=22)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
 set(gca, 'FontWeight','bold')
 %%
@@ -137,9 +137,9 @@ parbd_c={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0],...
     'max_step',[in.c_ext,0.05; in.tau_s,0.05;in.tau_c,0.1; 0,0.1]};
 psfix=dde_psol_lincond('psfix',nx,'profile',...
     'trafo',Mg2,'shift',[1,4],'condprojint',linspace(0.1,0.2,2)'*[1,1]);
-    [fpsol,psol,sucp]=SetupPsol(fhopf,branch0_tauc_bis,indbifc,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
-        'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
-            parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
+[fpsol,psol,sucp]=SetupPsol(fhopf,branch0_tauc_bis,indbifc,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
+    'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
+    parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
 %
 figure(7)
 clf
@@ -148,7 +148,7 @@ psol=br_contn(fpsol,psol,200);
 % Compute stability of POs
 [psol,unst_po,dom_po,triv_defect_po]=br_stabl(fpsol,psol,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_po=arrayfun(@(x)x.parameter(in.tau_c),psol.point);
-%Plot stability of POs 
+%Plot stability of POs
 ymxs_po=arrayfun(@(x)max(x.profile(1,:)),psol.point);
 ymins_po=arrayfun(@(x)min(x.profile(1,:)),psol.point);
 figure(4)
@@ -160,30 +160,6 @@ plot(x_taus_po(unst_po==0),ymins_po(unst_po==0),'bo',...
     x_taus_po(unst_po>=1),ymins_po(unst_po>=1),'ro','LineWidth',2)
 %
 psol=br_remove_extracolumns(psol);
-%save('posol_s4_group_sym_impose.mat')
-
-%
-pf=psol.point(100);
-eigf1=pf.stability.eigenfuncs(1);
-eigf2=pf.stability.eigenfuncs(2);
-eigf3=pf.stability.eigenfuncs(3);
-eigf4=pf.stability.eigenfuncs(4);
-figure(1011)
-clf;
-hold on
-plot(eigf1.mesh*eigf1.period,eigf1.profile,'LineWidth',2)
-% plot(eigf1.mesh*eigf1.period,eigf1.profile(2,:),'k-.','LineWidth',3)
-% plot(eigf1.mesh*eigf1.period,eigf1.profile(3,:),'LineWidth',2)
-% plot(eigf1.mesh*eigf1.period,eigf1.profile(4,:),'r--','LineWidth',1.5)
-title('eigenfuncs(1):  \delta = 0')
-grid on
-figure(1021)
-clf;
-hold on
-plot(eigf2.mesh*eigf2.period,eigf2.profile,'LineWidth',2)
-title('eigenfuncs(2): \delta = 0')
-grid on
-%
 figure(250)
 clf;
 hold on; grid on
@@ -194,8 +170,8 @@ plot(x_taus_po(unst_po==0),ymxs_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymxs_po(unst_po>=1),'ro','LineWidth',2)
 plot(x_taus_po(unst_po==0),ymins_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymins_po(unst_po>=1),'ro','LineWidth',2)
- plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
-     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
@@ -217,8 +193,8 @@ plot(x_taus_po(unst_po==0),ymxs_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymxs_po(unst_po>=1),'ro','LineWidth',2)
 plot(x_taus_po(unst_po==0),ymins_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymins_po(unst_po>=1),'ro','LineWidth',2)
- plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
-     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
@@ -231,36 +207,37 @@ title('(a)')
 nexttile
 hold on; grid on
 plot(x_tauc_hf(unst_hopf==0),x_taus_hf(unst_hopf==0),'k.','MarkerSize',8)
-    plot(x_tauc_hf(unst_hopf>=1),x_taus_hf(unst_hopf>=1),'.','MarkerSize',8)
-    legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',12)
-    ylabel('$\tau_{s}$','Interpreter','latex','FontName','Cambria',FontSize=22)
+plot(x_tauc_hf(unst_hopf>=1),x_taus_hf(unst_hopf>=1),'.','MarkerSize',8)
+legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',12)
+ylabel('$\tau_{s}$','Interpreter','latex','FontName','Cambria',FontSize=22)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
 set(gca, 'FontWeight','bold')
-    title('(b)')
-    %
-    po1=psol.point(20);
-    figure(9)
-    clf;
-    plot(po1.mesh*po1.period,po1.profile,'LineWidth',2)
-    legend('$x_{1}$','$x_{2}$','$x_{3}$','$x_{4}$','Interpreter','latex','FontSize',20,'Location','northeastoutside')
-    xlim([0,po1.period])
-    set(gca, 'FontWeight','bold')
-    grid on
+title('(b)')
 %
+po1=psol.point(20);
+figure(9)
+clf;
+plot(po1.mesh*po1.period,po1.profile,'LineWidth',2)
+legend('$x_{1}$','$x_{2}$','$x_{3}$','$x_{4}$','Interpreter','latex','FontSize',20,'Location','northeastoutside')
+xlim([0,po1.period])
+set(gca, 'FontWeight','bold')
+grid on
+save('par2_S4permutations.mat')
+%%
 Mg3=[0,0,1,0; 0,0,0,1; 1,0,0,0; 0,1,0,0];
 pmfix3=dde_stst_lincond('pmfix',nx,'v','trafo',Mg3,'rotation',[1,2]);
 psfix3=dde_psol_lincond('psfix',nx,'profile','trafo',Mg3,'shift',[1,2],'condprojint',linspace(0.1,0.2,2)'*[1,1]);
-    [fpsol2,psol2,sucp2]=SetupPsol(fhopf,branch0_tauc_bis,indbifc,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix3,...
-        'outputfuncs',true,'extra_condition',true,'usercond',psfix3,'intervals',60,'degree',4,...
-        parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
-    %
-    figure(250)
-    hold on
-    psol2=br_contn(fpsol2,psol2,100);
-% Compute stability of POs
+[fpsol2,psol2,sucp2]=SetupPsol(fhopf,branch0_tauc_bis,indbifc,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix3,...
+    'outputfuncs',true,'extra_condition',true,'usercond',psfix3,'intervals',60,'degree',4,...
+    parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
+%
+figure(888)
+hold on
+psol2=br_contn(fpsol2,psol2,200);
+%% Compute stability of POs
 [psol2,unst_po2,dom_po2,triv_defect_po2]=br_stabl(fpsol2,psol2,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_po2=arrayfun(@(x)x.parameter(in.tau_c),psol2.point);
-% Plot stability of POs 
+% Plot stability of POs
 ymxs_po2=arrayfun(@(x)max(x.profile(1,:)),psol2.point);
 ymins_po2=arrayfun(@(x)min(x.profile(1,:)),psol2.point);
 figure(250)
@@ -283,8 +260,8 @@ plot(x_taus_po(unst_po==0),ymxs_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymxs_po(unst_po>=1),'ro','LineWidth',2)
 plot(x_taus_po(unst_po==0),ymins_po(unst_po==0),'ko',...
     x_taus_po(unst_po>=1),ymins_po(unst_po>=1),'ro','LineWidth',2)
- plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
-     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
@@ -303,8 +280,8 @@ plot(x_taus_po2(unst_po2==0),ymxs_po2(unst_po2==0),'bo',...
     x_taus_po2(unst_po2>=1),ymxs_po2(unst_po2>=1),'ro','LineWidth',2)
 plot(x_taus_po2(unst_po2==0),ymins_po2(unst_po2==0),'bo',...
     x_taus_po2(unst_po2>=1),ymins_po2(unst_po2>=1),'ro','LineWidth',2)
- plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
-     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
@@ -334,7 +311,8 @@ set(gca, 'FontWeight','bold')
 grid on
 title('(d)','FontSize',16,'FontName','Cambria')
 %%
-save('oscillators_bifurcation_analysis.mat')
+psol2=br_remove_extracolumns(psol2);
+save('par3_S4permutations.mat')
 %%
 parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0; in.delta,-2],...
     'max_bound',[in.c_ext,3;in.tau_s,4; in.tau_c,4; in.delta,2],...
@@ -358,9 +336,9 @@ figure(32)
 clf;
 hold on; grid on
 plot(x_tauc_hf_delta(unst_hopf_delta==0),x_delt_hf_delta(unst_hopf_delta==0),'k.','MarkerSize',10)
-    plot(x_tauc_hf_delta(unst_hopf_delta>=1),x_delt_hf_delta(unst_hopf_delta>=1),'.','MarkerSize',10)
-    legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',16)
-    ylabel('$\delta$','Interpreter','latex','FontName','Cambria',FontSize=22)
+plot(x_tauc_hf_delta(unst_hopf_delta>=1),x_delt_hf_delta(unst_hopf_delta>=1),'.','MarkerSize',10)
+legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',16)
+ylabel('$\delta$','Interpreter','latex','FontName','Cambria',FontSize=22)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
 set(gca, 'FontWeight','bold')
 %%
@@ -368,15 +346,15 @@ set(gca, 'FontWeight','bold')
 hopf_branch=br_remove_extracolumns(hopf_branch);
 %save('Hopf_br_sym_impose.mat')
 %
-    [fpsol3,psol3,sucp3]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d1,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
-        'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
-            parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
+[fpsol3,psol3,sucp3]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d1,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
+    'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
+    parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
 figure(876)
 psol3=br_contn(fpsol3,psol3,200);
 %% Compute stability of POs
 [psol3,unst_po3,dom_po3,triv_defect_po3]=br_stabl(fpsol3,psol3,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_po3=arrayfun(@(x)x.parameter(in.tau_c),psol3.point);
-% Plot stability of POs 
+% Plot stability of POs
 ymxs_po3=arrayfun(@(x)max(x.profile(1,:)),psol3.point);
 ymins_po3=arrayfun(@(x)min(x.profile(1,:)),psol3.point);
 figure(433)
@@ -388,16 +366,16 @@ plot(x_taus_po3(unst_po3==0),ymins_po3(unst_po3==0),'bo',...
     x_taus_po3(unst_po3>=1),ymins_po3(unst_po3>=1),'ro','LineWidth',2)
 %%
 [~,ind_d2]=min(abs(x_delt_hf_delta+1.5));
-    [fpsol4,psol4,sucp4]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d2,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
-        'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
-            parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
-    %%
+[fpsol4,psol4,sucp4]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d2,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix,...
+    'outputfuncs',true,'extra_condition',true,'usercond',psfix,'intervals',60,'degree',4,...
+    parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
+%%
 figure(876)
 psol4=br_contn(fpsol4,psol4,200);
 %% Compute stability of POs
 [psol4,unst_po4,dom_po4,triv_defect_po4]=br_stabl(fpsol4,psol4,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_po4=arrayfun(@(x)x.parameter(in.tau_c),psol4.point);
-% Plot stability of POs 
+% Plot stability of POs
 ymxs_po4=arrayfun(@(x)max(x.profile(1,:)),psol4.point);
 ymins_po4=arrayfun(@(x)min(x.profile(1,:)),psol4.point);
 %%
@@ -409,15 +387,15 @@ plot(x_taus_po4(unst_po4==0),ymxs_po4(unst_po4==0),'bo',...
 plot(x_taus_po4(unst_po4==0),ymins_po4(unst_po4==0),'bo',...
     x_taus_po4(unst_po4>=1),ymins_po4(unst_po4>=1),'ro','LineWidth',2)
 %%
-   [fpsoln,psoln,sucpn]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d1,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix3,...
-        'outputfuncs',true,'extra_condition',true,'usercond',psfix3,'intervals',60,'degree',4,...
-            parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
+[fpsoln,psoln,sucpn]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d1,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix3,...
+    'outputfuncs',true,'extra_condition',true,'usercond',psfix3,'intervals',60,'degree',4,...
+    parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
 figure(876)
 psoln=br_contn(fpsoln,psoln,200);
 %%
 [psoln,unst_pon,dom_pon,triv_defect_pon]=br_stabl(fpsoln,psoln,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_pon=arrayfun(@(x)x.parameter(in.tau_c),psoln.point);
-% Plot stability of POs 
+% Plot stability of POs
 ymxs_pon=arrayfun(@(x)max(x.profile(1,:)),psoln.point);
 ymins_pon=arrayfun(@(x)min(x.profile(1,:)),psoln.point);
 %%
@@ -429,7 +407,3 @@ plot(x_taus_pon(unst_pon==0),ymxs_pon(unst_pon==0),'bo',...
 plot(x_taus_pon(unst_pon==0),ymins_pon(unst_pon==0),'bo',...
     x_taus_pon(unst_pon>=1),ymins_pon(unst_pon>=1),'ro','LineWidth',2)
 %%
-figure(4480)
-clf;
-pn=psoln.point(100);
-plot(pn.mesh*pn.period,pn.profile,'Linewidth',2 )
