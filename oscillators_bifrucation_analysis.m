@@ -218,7 +218,7 @@ xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
 %yticks([-0.1,0,0.1])
-legend('stst $\#$ unst=0','stst $\#$ unst=6','','stable POs','','triple Hopf-bif','Interpreter','latex','FontSize',18)
+legend('stst $\#$ unst=0','stst $\#$ unst=6','','stable POs: $\Pi\sim (1234)_{1/4}$','','triple Hopf-bif','Interpreter','latex','FontSize',18)
 ylabel('$x_{1}$','Interpreter','latex','FontName','Cambria',FontSize=22)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
 set(gca, 'FontWeight','bold')
@@ -237,8 +237,8 @@ plot(par_axc(indbifc),x0_axc(indbifc),'s','Marker', 's', 'MarkerSize', 12, ...
 xlim([0,2])
 %ylim([-0.1,0.1])
 %xticks([0,0.5,1])
-%yticks([-0.1,0,0.1])
-legend('stst $\#$ unst=0','stst $\#$ unst=6','','stable POs','','triple Hopf-bif','Interpreter','latex','FontSize',18)
+%yticks([-0.1,0,0.1])stable PO: $\Pi:\sim (1234)_{1/4}$','stable PO: $\Pi:\sim (1234)_{1/4}$'
+legend('stst $\#$ unst=0','stst $\#$ unst=6','','stable POs: $\Pi\sim (13)(24)_{1/2}$','','triple Hopf-bif','Interpreter','latex','FontSize',18)
 ylabel('$x_{1}$','Interpreter','latex','FontName','Cambria',FontSize=22)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
 set(gca, 'FontWeight','bold')
@@ -322,7 +322,7 @@ plot(x_taus_po3(unst_po3==0),ymxs_po3(unst_po3==0),'bo',...
     x_taus_po3(unst_po3>=1),ymxs_po3(unst_po3>=1),'ro','LineWidth',2)
 plot(x_taus_po3(unst_po3==0),ymins_po3(unst_po3==0),'bo',...
     x_taus_po3(unst_po3>=1),ymins_po3(unst_po3>=1),'ro','LineWidth',2)
-legend('stable PO: $\Pi:\sim (1234)_{1/4}$','stable PO: $\Pi:\sim (1234)_{1/4}$','','','Interpreter','latex','FontSize',16)
+legend('stable PO: $\Pi\sim (1234)_{1/4}$','unstable PO: $\Pi\sim (1234)_{1/4}$','','','Interpreter','latex','FontSize',22)
 title('$\delta=1.5$','Interpreter','latex','FontSize',20)
 set(gca,'FontWeight','bold')
 %%
@@ -347,14 +347,15 @@ plot(x_taus_po4(unst_po4==0),ymxs_po4(unst_po4==0),'bo',...
     x_taus_po4(unst_po4>=1),ymxs_po4(unst_po4>=1),'ro','LineWidth',2)
 plot(x_taus_po4(unst_po4==0),ymins_po4(unst_po4==0),'bo',...
     x_taus_po4(unst_po4>=1),ymins_po4(unst_po4>=1),'ro','LineWidth',2)
-legend('stable PO: $\Pi:\sim (1234)_{1/4}$','stable PO: $\Pi:\sim (1234)_{1/4}$','','','Interpreter','latex','FontSize',16)
+legend('stable PO: $\Pi\sim (1234)_{1/4}$','unstable PO: $\Pi\sim (1234)_{1/4}$','','','Interpreter','latex','FontSize',22)
 title('$\delta=-1.5$','Interpreter','latex','FontSize',20)
 set(gca,'FontWeight','bold')
-%%
+%% Now, repeat the computation for the case delat =1.5 for POs: \Pi~(13)(24), shift by a half
 [fpsoln,psoln,sucpn]=SetupPsol(fhopf_delta,hopf_branch_delta,ind_d1,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix3,...
     'outputfuncs',true,'extra_condition',true,'usercond',psfix3,'intervals',60,'degree',4,...
     parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
-figure(876)
+figure(9)
+clf;
 psoln=br_contn(fpsoln,psoln,200);
 %%
 [psoln,unst_pon,dom_pon,triv_defect_pon]=br_stabl(fpsoln,psoln,0,1,'exclude_trivial',true,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
@@ -363,11 +364,18 @@ x_taus_pon=arrayfun(@(x)x.parameter(in.tau_c),psoln.point);
 ymxs_pon=arrayfun(@(x)max(x.profile(1,:)),psoln.point);
 ymins_pon=arrayfun(@(x)min(x.profile(1,:)),psoln.point);
 %%
-figure(435)
+figure(9)
 clf
 hold on; grid on
 plot(x_taus_pon(unst_pon==0),ymxs_pon(unst_pon==0),'bo',...
     x_taus_pon(unst_pon>=1),ymxs_pon(unst_pon>=1),'ro','LineWidth',2)
 plot(x_taus_pon(unst_pon==0),ymins_pon(unst_pon==0),'bo',...
     x_taus_pon(unst_pon>=1),ymins_pon(unst_pon>=1),'ro','LineWidth',2)
+legend('stable PO: $\Pi\sim (13)(24)_{1/2}$','unstable PO: $\Pi\sim (13)(24)_{1/2}$','','','Interpreter','latex','FontSize',22)
+title('$\delta=1.5$','Interpreter','latex','FontSize',20)
+set(gca,'FontWeight','bold')
 %%
+psol3=br_remove_extracolumns(psol3);
+psol4=br_remove_extracolumns(psol4);
+psoln=br_remove_extracolumns(psoln);
+save('par4_S4permutations.mat')
