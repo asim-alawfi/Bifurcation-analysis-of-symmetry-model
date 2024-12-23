@@ -339,11 +339,11 @@ legend_text={'stst $\#$ unst=0','stst $\#$ unst=6','equivariant Hopf-bifurcation
     'stable POs: $\delta=-1$','unstable POs','POs: $\Pi\sim (1234)_{1/4}$'};
 vec_plt=[plt_eqstb(1),plt_equnstb(1),plt_hpf(1),plt_pod0stb(1),plt_pod1stb(1),plt_pod2stb(1),plt_pod1unstb(1),...
      plot(NaN, NaN,'Color',[1,1,1])];
-legend(vec_plt,legend_text,'Interpreter','latex','FontSize',22,'Location','best')
-ylabel('$x_{1}$','Interpreter','latex','FontName','Cambria',FontSize=22)
-xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
+legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','best')
+ylabel('$x_{1}$','Interpreter','latex','FontName','Cambria','FontSize',26)
+xlabel('$\tau_{c}$','Interpreter','latex','FontSize',26,'FontName','Cambria')
 xlim([0.3,1])
-set(gca, 'FontWeight','bold')
+set(gca, 'FontSize',26,'FontWeight','bold')
 %%
 save('S4_permutation_model_all_deltas.mat')
 %% 
