@@ -18,7 +18,7 @@ parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0],...
     'max_bound',[in.c_ext,3;in.tau_s,4; in.tau_c,4],...
     'max_step',[in.c_ext,0.05; in.tau_s,0.01;in.tau_c,0.01; 0,0.01]};
 funcs=set_symfuncs(@sym_oscillators,'sys_tau',@()[in.tau_s,in.tau_c]);
-%% compute and find trivial equilibri
+%% compute and find trivial equilibri in tau_s
 [branch0,suc0]=SetupStst(funcs,...
     'parameter',par,'x',x0,...
     'contpar',in.tau_s,'step',0.01,parbd{:},...
@@ -30,10 +30,9 @@ clf;
 [branch0,ss1,fs1,rs1]=br_contn(funcs,branch0,600);
 branch0=br_rvers(branch0);
 [branch0,ss01,fs01,rs01]=br_contn(funcs,branch0,600);
-%%
+%% compute stability
 [branch0,unst_inds,~,~]=br_stabl(funcs,branch0,0,0);
 [branch0,bif1testfuncs,indbif1,bif1types]=LocateSpecialPoints(funcs,branch0,'debug',true);
-%%
 [branch0,unst_inds,~,~]=br_stabl(funcs,branch0,0,0);
 getpar=@(x,i)arrayfun(@(p)p.parameter(i),x.point);
 getx=@(x,i)arrayfun(@(p)p.x(i),x.point);
@@ -339,14 +338,89 @@ legend_text={'stst $\#$ unst=0','stst $\#$ unst=6','equivariant Hopf-bifurcation
     'stable POs: $\delta=-1$','unstable POs','POs: $\Pi\sim (1234)_{1/4}$'};
 vec_plt=[plt_eqstb(1),plt_equnstb(1),plt_hpf(1),plt_pod0stb(1),plt_pod1stb(1),plt_pod2stb(1),plt_pod1unstb(1),...
      plot(NaN, NaN,'Color',[1,1,1])];
-legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','best')
+legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','northeastoutside')
 ylabel('$x_{1}$','Interpreter','latex','FontName','Cambria','FontSize',26)
 xlabel('$\tau_{c}$','Interpreter','latex','FontSize',26,'FontName','Cambria')
 xlim([0.3,1])
-set(gca, 'FontSize',26,'FontWeight','bold')
+set(gca, 'FontSize',26,'FontWeight','bold','LineWidth',2)
 %%
 save('S4_permutation_model_all_deltas.mat')
-%% 
+%%
+%% Hopf bifurcation computation with applying symmetry extension
+nx=length(x0);
+idnet=eye(4);
+Mg_1234=[0,1,0,0; 0,0,1,0; 0,0,0,1; 1,0,0,0];
+pmfix_1234=dde_stst_lincond('pmfix',nx,'v',...
+    'trafo',Mg_1234,'rotation',[1,4]);
+[fhopf_dt,hopf_branch_dt,such]=SetupHopf(funcs,branch0_tauc_dt_bis,indbifcdt,'contpar',[in.tau_c,in.tau_s],...
+    'dir',in.tau_s,'print_residual_info',1,'outputfuncs',true,'print_residual_info',1,...
+    'extracolumns','auto','initcond',pmfix_1234,'extra_condition',true,'usercond',pmfix_1234,parbd{:});
+figure(3)
+clf
+hold on%clf
+hopf_branch_dt=br_contn(fhopf_dt,hopf_branch_dt,400);
+hopf_branch_dt=br_rvers(hopf_branch_dt);
+hopf_branch_dt=br_contn(fhopf_dt,hopf_branch_dt,300);
+%
+[hopf_branch_dt,unst_hopf_dt,dom_hopf,triv_defect_hopf]=br_stabl(fhopf_dt,hopf_branch_dt,0,0,'exclude_trivial',true,...
+    'locate_trivial',@(p)1i*p.omega*[1,-1,1,-1,1,-1]);
+x_taus_hf_dt=arrayfun(@(x)x.parameter(in.tau_s),hopf_branch_dt.point);
+x_tauc_hf_dt=arrayfun(@(x)x.parameter(in.tau_c),hopf_branch_dt.point);
+%
+figure(33)
+clf;
+tiledlayout(5,5,"TileSpacing","compact");
+nexttile([5,3])
+hold on; grid on
+plt_eqstb_dt=plot(par_axcdt(unst_indscdt==0),x0_axcdt(unst_indscdt==0),'-','Color','k','LineWidth',3);
+plt_equnstb_dt=plot(par_axcdt(unst_indscdt==6),x0_axcdt(unst_indscdt==6),'k--','LineWidth',3);
+plot(par_axcdt(unst_indscdt>=7),x0_axcdt(unst_indscdt>=7),'.','Color',[0.7 0.7 0.7],'MarkerSize', 8,'LineWidth',2)
+%%%%%% Plotting POs stability  %%%%%%
+lwidth={'LineWidth',5};
+% case delta=1
+plt_pod1stb=plot(x_taus_po_dt(unst_po_dt==0),ymxs_po_dt(unst_po_dt==0),'-','Color',clrs(1,:),lwidth{:});
+plt_pod1unstb=plot(x_taus_po_dt(unst_po_dt>=1),ymxs_po_dt(unst_po_dt>=1),'-.','Color',[0.7 0.7 0.7],lwidth{:});
+plot(x_taus_po_dt(unst_po_dt==0),ymins_po_dt(unst_po_dt==0),'-','Color',clrs(1,:),lwidth{:})
+plot(x_taus_po_dt(unst_po_dt>=1),ymins_po_dt(unst_po_dt>=1),'-.','Color',[0.7 0.7 0.7],lwidth{:})
+%%%% Plot Hopf-Bifurcation points %%%%%
+plt_hpf_dt=plot(par_axcdt(indbifcdt),x0_axcdt(indbifcdt),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+legend_text_delta={'stable equilibria','unstable equilibria','equivariant Hopf-bifurcation',...
+    'stable POs','unstable POs','POs: $\Pi\sim (1234)_{1/4}$'};
+vec_plt_delta=[plt_eqstb_dt(1),plt_equnstb_dt(1),plt_hpf_dt(1),plt_pod1stb(1),plt_pod1unstb(1),...
+     plot(NaN, NaN,'Color',[1,1,1])];
+legend(vec_plt_delta,legend_text_delta,'Interpreter','latex','FontSize',24)%,'Location','northeastoutside')
+ylabel('$x_{1}$','Interpreter','latex')%,'FontName','Cambria','FontSize',26)
+xlabel('$\tau_{c}$','Interpreter','latex')%,'FontSize',26,'FontName','Cambria')
+xlim([0.3,1])
+title('(a)')
+set(gca, 'FontSize',30,'FontWeight','bold','FontName','Courier','LineWidth',2,'Box', 'on')
+%%%%% Hopf Bifurcation%%%%%%%%
+nexttile([5,2])
+hold on; grid on
+plot(x_tauc_hf_dt(unst_hopf_dt==0),x_taus_hf_dt(unst_hopf_dt==0),'k-','LineWidth',4)
+plot(x_tauc_hf_dt(unst_hopf_dt>=1),x_taus_hf_dt(unst_hopf_dt>=1),'r.','MarkerSize',10)
+plt_hpf_dt=plot(par_axcdt(indbifcdt),branch0_tauc_dt_bis.point(10).parameter(in.tau_s),'s','Marker', 's', 'MarkerSize', 12, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+legend('Hopf-bifurcation','starting point','Interpreter','latex')
+ylabel('$\tau_{s}$','Interpreter','latex')
+xlabel('$\tau_{c}$','Interpreter','latex')
+title('(b)')
+set(gca, 'FontSize',30,'FontWeight','bold','FontName','Courier','LineWidth',2,'Box', 'on')
+
+hopf_branch=br_remove_extracolumns(hopf_branch);
+branch0_tauc_bis=br_remove_extracolumns(branch0_tauc_bis);
+branch0_tauc=br_remove_extracolumns(branch0_tauc);
+branch0=br_remove_extracolumns(branch0);
+save('S4_permutation_model_all_deltas_p2.mat')
+% branch=psol;
+% for i=1:length(branch.point)
+% figure(777)
+% clf
+% pp=branch.point(i);
+% plot(pp.mesh*pp.period,pp.profile,'LineWidth',3)
+% end
+
 % Mg_13=[0,0,1,0; 0,1,0,0; 1,0,0,0; 0,0,0,1];
 % pmfix3=dde_stst_lincond('pmfix',nx,'v','trafo',Mg_13,'rotation',[1,2]);
 % psfix3=dde_psol_lincond('psfix',nx,'profile','trafo',Mg_13,'shift',[1,2],'condprojint',linspace(0.0,0.2,2)'*[1,1]);
