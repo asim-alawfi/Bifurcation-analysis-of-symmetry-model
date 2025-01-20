@@ -53,7 +53,7 @@ pmfix_1234=dde_stst_lincond('pmfix',nx,'v','trafo',Mg_1234,'rotation',[1,4]);
 
 branch0=br_remove_extracolumns(branch0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%% Now, we repeat the above computatios for $\delat>0$ and then for $\delta =0.5$ (small)
+%% Now, we compute one-parameter bifurcation branch in $\delat$ 
 parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0; in.delta,-1],...
     'max_bound',[in.c_ext,5;in.tau_s,4; in.tau_c,5; in.delta,1.1],...
     'max_step',[in.c_ext,0.01; in.tau_s,0.01;in.tau_c,0.01; in.delta,0.01; 0,0.02]};
@@ -65,6 +65,7 @@ clf;
 branch0_dt=br_rvers(branch0_dt);
 [branch0_dt,sdt0,fdt0,rdt0]=br_contn(funcs_dt,branch0_dt,1000);
 delta_x=getpar(branch0_dt,in.delta);
+%% Then we compute one-paramter bifurcation in $tau_c$ at fixed $\delta=0.2$
 [~,it2]=min(abs(delta_x-0.2));
 [funcs_cdt,branch0_tauc_dt,succdt]=ChangeBranchParameters(funcs_dt,branch0_dt,it2,'contpar',in.tau_c,'outputfuncs',true,parbd{:});
 figure(1)
@@ -80,7 +81,7 @@ bifp_dt=find(diff(unst_indscdt));
 [branch0_tauc_dt_bis,unst_indscdt,~,~]=br_stabl(funcs_cdt,branch0_tauc_dt_bis,0,0);
 par_axcdt=getpar(branch0_tauc_dt_bis,in.tau_c);
 x0_axcdt=getx(branch0_tauc_dt_bis,1);
-%% POs in one-parameter 
+%% One-parameter bifurcation brnanch in $\tau_c$
 parbd_c={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0],...
     'max_bound',[in.c_ext,6;in.tau_s,5; in.tau_c,5],...
     'max_step',[in.c_ext,0.05; in.tau_s,0.05;in.tau_c,0.1; 0,0.1]};
@@ -143,15 +144,12 @@ po2=psol_dt.point(it2);
 plot(po2.mesh*po2.period,po2.profile,'LineWidth',3)
 title('\tau_c=3.5','FontSize',18)
 hold on; grid on
-
-%%
-%% Hopf bifurcation computation with applying symmetry extension
+%% Hopf bifurcation in $(\tau_c,\tau_s)$  with applying symmetry extension
 pmfix_1234=dde_stst_lincond('pmfix',nx,'v',...
     'trafo',Mg_1234,'rotation',[1,4]);
 [fhopf_dt,hopf_branch_dt,such]=SetupHopf(funcs,branch0_tauc_dt_bis,indbifcdt,'contpar',[in.tau_c,in.tau_s],...
     'dir',in.tau_s,'print_residual_info',1,'outputfuncs',true,'print_residual_info',1,...
     'extracolumns','auto','initcond',pmfix_1234,'extra_condition',true,'usercond',pmfix_1234,parbd{:});
-%
 figure(3)
 clf
 hold on%clf
@@ -204,12 +202,9 @@ ylabel('$\tau_{s}$','Interpreter','latex')
 xlabel('$\tau_{c}$','Interpreter','latex')
 title('(b)')
 set(gca, 'FontSize',30,'FontWeight','bold','FontName','Courier','LineWidth',2,'Box', 'on')
-%%
 hopf_branch_dt=br_remove_extracolumns(hopf_branch_dt);
 psol_dt=br_remove_extracolumns(psol_dt);
-%
-
-%
+%%
 save('bif_analysis_S4_system_first.mat')
 %%
 % [~,it]=min(abs(x_taus_po_dt-1)); % % tau_c=3
