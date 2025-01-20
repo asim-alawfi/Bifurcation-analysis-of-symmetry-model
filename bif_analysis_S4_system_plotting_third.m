@@ -16,10 +16,10 @@ yax_Sint_A=arrayfun(@(x)dde_psol_lincond(x,Sint_A),psol_dt.point);
 yax_Sint_B=arrayfun(@(x)dde_psol_lincond(x,Sint_B),psol_dt.point);
 yax_sym=yax_Sint_A-yax_Sint_B;
 
-Sint_A1=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
-    'shift',[1,2],'condprojmat',-1,'stateproj',[1,0,0,0],'condprojint',[0,0.5]);
-Sint_B1=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
-    'shift',[1,2],'condprojmat',-1,'stateproj',[0,1,0,0],'condprojint',[0.5,1]);
+% Sint_A1=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
+%     'shift',[1,2],'condprojmat',-1,'stateproj',[1,0,0,0],'condprojint',[0,0.5]);
+% Sint_B1=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
+%     'shift',[1,2],'condprojmat',-1,'stateproj',[0,1,0,0],'condprojint',[0.5,1]);
 yax_Sint_A1=arrayfun(@(x)dde_psol_lincond(x,Sint_A),psol_dts1.point);
 yax_Sint_B1=arrayfun(@(x)dde_psol_lincond(x,Sint_B),psol_dts1.point);
 yax_sym1=yax_Sint_A1-yax_Sint_B1;
@@ -63,11 +63,12 @@ pltnan3=plot(NaN,NaN,'Color',[1,1,1]);
 
 plt_hpf=plot(x_taus_po_dt(1),yax_sym(1),'s','Marker', 's', 'MarkerSize', 18, ...
     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
-legend_text={'stable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (13)_{0}(24)_{0}$',...
+legend_text={'stable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','stable POs: $\Pi\sim (13)_{0}(24)_{0}$  $\&$   $\Pi\sim (13)_{1/2}(24)_{1/2}$',...
     'unstable POs: $\Pi\sim (123)_{0}$', 'symmetry-breaking POs','equivariant Hopf-bifurcation'};
 vec_plt=[plt_pod1stb(1),plt_pod1unstb(1),plt_pod2unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
-legend(vec_plt,legend_text,'Interpreter','latex','FontSize',30,'Location','northwestoutside')
-set(gca,'LineWidth',2,'Box','on','FontSize',14,'FontWeight','bold','XTick',[],'YTick',[-2,0,2])
+legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','northwestoutside')
+xlabel('$\tau_c$','FontSize',30,'Interpreter','latex')
+set(gca,'LineWidth',2,'Box','on','FontWeight','bold','XTick',[],'YTick',[-2,0,2])
 % Plot time profile PO~ (1234)_{1/4}
 nexttile([2,2])
 hold on;
