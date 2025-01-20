@@ -45,41 +45,13 @@ indfold=indbif1(strcmp(bif1types,'fold'));
 %% Fix tau_s at 1.4 and continue in one-parameter continuation in tau_c.
 [~,it]=min(abs(par_ax-1.4));
 clrs=lines();
-%% Hopf bifurcation computation with applying symmetry extension
+%%  Symmetry condition on Hopf bifurcation point 
 nx=length(x0);
 idnet=eye(4);
 Mg_1234=[0,1,0,0; 0,0,1,0; 0,0,0,1; 1,0,0,0];
-pmfix_1234=dde_stst_lincond('pmfix',nx,'v',...
-    'trafo',Mg_1234,'rotation',[1,4]);
-% [fhopf,hopf_branch,such]=SetupHopf(funcs,branch0_tauc_bis,indbifc,'contpar',[in.tau_c,in.tau_s],...
-%     'dir',in.tau_s,'print_residual_info',1,'outputfuncs',true,'print_residual_info',1,...
-%     'extracolumns','auto','initcond',pmfix_1234,'extra_condition',true,'usercond',pmfix_1234,parbd{:});
-% figure(3)
-% clf
-% hold on%clf
-% hopf_branch=br_contn(fhopf,hopf_branch,300);
-% hopf_branch=br_rvers(hopf_branch);
-% hopf_branch=br_contn(fhopf,hopf_branch,300);
-% %%
-% [hopf_branch,unst_hopf,dom_hopf,triv_defect_hopf]=br_stabl(fhopf,hopf_branch,0,0,'exclude_trivial',true,...
-%     'locate_trivial',@(p)1i*p.omega*[1,-1,1,-1,1,-1]);
-% x_taus_hf=arrayfun(@(x)x.parameter(in.tau_s),hopf_branch.point);
-% x_tauc_hf=arrayfun(@(x)x.parameter(in.tau_c),hopf_branch.point);
-% %%
-% figure(3)
-% clf;
-% hold on; grid on
-% plot(x_tauc_hf(unst_hopf==0),x_taus_hf(unst_hopf==0),'k.','MarkerSize',10)
-% plot(x_tauc_hf(unst_hopf>=1),x_taus_hf(unst_hopf>=1),'.','MarkerSize',10)
-% legend('Hopf-bif $\#$ unst=0','Hopf-bif $\#$ unst$\geq 1$','Interpreter','latex','FontSize',16)
-% ylabel('$\tau_{s}$','Interpreter','latex','FontName','Cambria',FontSize=22)
-% xlabel('$\tau_{c}$','Interpreter','latex','FontSize',22,'FontName','Cambria')
-% set(gca, 'FontWeight','bold')
-% %%
-% hopf_branch=br_remove_extracolumns(hopf_branch);
-% branch0_tauc_bis=br_remove_extracolumns(branch0_tauc_bis);
-branch0=br_remove_extracolumns(branch0);
+pmfix_1234=dde_stst_lincond('pmfix',nx,'v','trafo',Mg_1234,'rotation',[1,4]);
 
+branch0=br_remove_extracolumns(branch0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% %%%%%% Now, we repeat the above computatios for $\delat>0$ and then for $\delta =0.5$ (small)
 parbd={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0; in.delta,-1],...
@@ -112,6 +84,7 @@ x0_axcdt=getx(branch0_tauc_dt_bis,1);
 parbd_c={'min_bound',[in.c_ext,0;in.tau_s,0; in.tau_c,0],...
     'max_bound',[in.c_ext,6;in.tau_s,5; in.tau_c,5],...
     'max_step',[in.c_ext,0.05; in.tau_s,0.05;in.tau_c,0.1; 0,0.1]};
+% Symmetry condition on POs 
 psfix_1234=dde_psol_lincond('psfix',nx,'profile',...
     'trafo',Mg_1234,'shift',[1,4],'condprojint',linspace(0.1,0.2,3)'*[1,1]);
 [fpsol_dt,psol_dt,sucp_dt]=SetupPsol(funcs_cdt,branch0_tauc_dt_bis,indbifcdt,'contpar',in.tau_c,'extracolumns','auto','initcond',pmfix_1234,...
@@ -123,7 +96,6 @@ psol_dt=br_contn(fpsol_dt,psol_dt,300);
 % Compute stability of POs
 [psol_dt,unst_po_dt,dom_po_dt,triv_defect_po_dt]=br_stabl(fpsol_dt,psol_dt,0,1,'exclude_trivial',true);%,'locate_trivial',@(p)[1,1],'geteigenfuncs',true);
 x_taus_po_dt=arrayfun(@(x)x.parameter(in.tau_c),psol_dt.point);
-%Plot stability of POs
 ymxs_po_dt=arrayfun(@(x)max(x.profile(1,:)),psol_dt.point);
 ymins_po_dt=arrayfun(@(x)min(x.profile(1,:)),psol_dt.point);
 branch0_tauc_dt=br_remove_extracolumns(branch0_tauc_dt);
@@ -172,8 +144,6 @@ plot(po2.mesh*po2.period,po2.profile,'LineWidth',3)
 title('\tau_c=3.5','FontSize',18)
 hold on; grid on
 
-%%
-%save('S4_permutation_model_all_deltas.mat')
 %%
 %% Hopf bifurcation computation with applying symmetry extension
 pmfix_1234=dde_stst_lincond('pmfix',nx,'v',...
@@ -240,7 +210,7 @@ psol_dt=br_remove_extracolumns(psol_dt);
 %
 
 %
-save('S4_permutation_model_all_deltas_25v.mat')
+save('bif_analysis_S4_system_first.mat')
 %%
 % [~,it]=min(abs(x_taus_po_dt-1)); % % tau_c=3
 % po=psol_dt.point(20);
