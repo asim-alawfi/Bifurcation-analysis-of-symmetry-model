@@ -164,34 +164,7 @@ x_tauc_hf_dt=arrayfun(@(x)x.parameter(in.tau_c),hopf_branch_dt.point);
 %%
 figure(33)
 clf;
-tiledlayout(5,5,"TileSpacing","compact");
-nexttile([5,3])
-hold on; grid on
-plt_eqstb_dt=plot(par_axcdt(unst_indscdt==0),x0_axcdt(unst_indscdt==0),'-','Color','k','LineWidth',3);
-plt_equnstb_dt=plot(par_axcdt(unst_indscdt==6),x0_axcdt(unst_indscdt==6),'k--','LineWidth',3);
-plot(par_axcdt(unst_indscdt>=7),x0_axcdt(unst_indscdt>=7),'.','Color',[0.7 0.7 0.7],'MarkerSize', 8,'LineWidth',2)
-%%%%%% Plotting POs stability  %%%%%%
-lwidth={'LineWidth',5};
-% case delta=1
-plt_pod1stb=plot(x_taus_po_dt(unst_po_dt==0),ymxs_po_dt(unst_po_dt==0),'-','Color',clrs(1,:),lwidth{:});
-plt_pod1unstb=plot(x_taus_po_dt(unst_po_dt>=1),ymxs_po_dt(unst_po_dt>=1),'-.','Color',[0.7 0.7 0.7],lwidth{:});
-plot(x_taus_po_dt(unst_po_dt==0),ymins_po_dt(unst_po_dt==0),'-','Color',clrs(1,:),lwidth{:})
-plot(x_taus_po_dt(unst_po_dt>=1),ymins_po_dt(unst_po_dt>=1),'-.','Color',[0.7 0.7 0.7],lwidth{:})
-%%%% Plot Hopf-Bifurcation points %%%%%
-plt_hpf_dt=plot(par_axcdt(indbifcdt),x0_axcdt(indbifcdt),'s','Marker', 's', 'MarkerSize', 12, ...
-    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
-legend_text_delta={'stable equilibria','unstable equilibria','equivariant Hopf-bifurcation',...
-    'stable POs','unstable POs','POs: $\Pi\sim (1234)_{1/4}$'};
-vec_plt_delta=[plt_eqstb_dt(1),plt_equnstb_dt(1),plt_hpf_dt(1),plt_pod1stb(1),plt_pod1unstb(1),...
-     plot(NaN, NaN,'Color',[1,1,1])];
-legend(vec_plt_delta,legend_text_delta,'Interpreter','latex','FontSize',24)%,'Location','northeastoutside')
-ylabel('$x_{1}$','Interpreter','latex')%,'FontName','Cambria','FontSize',26)
-xlabel('$\tau_{c}$','Interpreter','latex')%,'FontSize',26,'FontName','Cambria')
-xlim([0.3,1])
-title('(a)')
-set(gca, 'FontSize',30,'FontWeight','bold','FontName','Courier','LineWidth',2,'Box', 'on')
 %%%%% Hopf Bifurcation%%%%%%%%
-nexttile([5,2])
 hold on; grid on
 plot(x_tauc_hf_dt(unst_hopf_dt==0),x_taus_hf_dt(unst_hopf_dt==0),'k.','LineWidth',4)
 plot(x_tauc_hf_dt(unst_hopf_dt>=1),x_taus_hf_dt(unst_hopf_dt>=1),'r.','MarkerSize',10)
@@ -206,31 +179,4 @@ hopf_branch_dt=br_remove_extracolumns(hopf_branch_dt);
 psol_dt=br_remove_extracolumns(psol_dt);
 %%
 save('bif_analysis_S4_system_first.mat')
-%%
-% [~,it]=min(abs(x_taus_po_dt-1)); % % tau_c=3
-% po=psol_dt.point(20);
-% 
-% fd23=@(t,x,Xd)funcs_dt.sys_rhs([x,Xd],po.parameter);
-% his=@(t)dde_coll_eva(po.profile-0.1,po.mesh,1+t/po.period,po.degree);
-% 
-% sold_23=dde23(fd23, [po.parameter(in.tau_s),po.parameter(in.tau_c)] ,his,[0,30],ddeset('RelTol',1e-7,'AbsTol',1e-7));
-% 
-% figure(90)
-% clf
-% tiledlayout(1,2)   
-% 
-% nexttile
-% hold on; grid on
-% plot(sold_23.x,sold_23.y(1:2,:),'-',...
-%     sold_23.x,sold_23.y(3:4,:),'-','LineWidth',3);
-% title('simulation near PO')
-% nexttile
-% hold on; grid on
-% plot(po.mesh*po.period,po.profile,'LineWidth',3)
-% title('time profile for nera initial PO')
-% %%
-% 
-% figure(7777)
-% clf
-% plot(real(dom_po_dt))
-% yline(1 )
+
