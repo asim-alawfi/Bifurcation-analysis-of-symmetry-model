@@ -9,7 +9,7 @@ addpath([base,'ddebiftool'],...
 load('bif_analysis_S4_system_second.mat')
 %% We plot int_{0}^{1/4} x1(t)-x2(t+1/4) dt by setting:
 Sint_A=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
-    'shift',[1,4],'condprojmat',-1,'stateproj',[1,0,0,0],'condprojint',[0,0.25]);
+    'shift',[1,4],'condprojmat',-1,'stateproj',[1,0,0,0],'condprojint',[0,.25]);
 Sint_B=dde_lincond_struct(size(psol_dt.point(1).profile,1),'profile','trafo',0,...
     'shift',[1,4],'condprojmat',-1,'stateproj',[0,1,0,0],'condprojint',[0.25,0.75]);
 yax_Sint_A=arrayfun(@(x)dde_psol_lincond(x,Sint_A),psol_dt.point);
@@ -32,7 +32,10 @@ yax_Sint_A3=arrayfun(@(x)dde_psol_lincond(x,Sint_A),psol_dtss.point);
 yax_Sint_B3=arrayfun(@(x)dde_psol_lincond(x,Sint_B),psol_dtss.point);
 yax_sym3=yax_Sint_A3-yax_Sint_B3;
 %%
-figure(1)
+pgray=0.5*[1 1 1];
+clrscop=copper();
+lwidth={'LineWidth',6,'MarkerSize',15};
+figure(10)
 clf
 tiledlayout(8,6,'TileSpacing','compact')
 nexttile([8,4])
@@ -52,23 +55,26 @@ plt_pod2unstb=plot(x_taus_po_dts1(unst_po_dts1>=0),yax_sym1(unst_po_dts1>=0),'-'
 p12egn=plot(x_taus_po_dts1(its1),yax_sym1(its1),'^','Color',[0 0.6 0],'MarkerSize',16,'MarkerFaceColor',[0 0.6 0]);
 pltnan1=plot(NaN,NaN,'Color',[1,1,1]);
 %%%%%%%
-plot(x_taus_po_dts2(unst_po_dts2>=0),yax_sym2(unst_po_dts2>=0),'-','Color',clrs(3,:),lwidth{:})
+plt_pod4unstb=plot(x_taus_po_dts2(unst_po_dts2>=0),yax_sym2(unst_po_dts2>=0),'-','Color',clrs(3,:),lwidth{:});
 [~,its2]=min(abs(x_taus_po_dts2-3.5));
 p13egn=plot(x_taus_po_dts2(its2),yax_sym2(its2),'r^','MarkerSize',16,'MarkerFaceColor','r');
 pltnan2=plot(NaN,NaN,'Color',[1,1,1]);
-
+[~,itss]=min(abs(x_taus_po_dtss-3.5));
 plt_pod3unst=plot(x_taus_po_dtss(unst_po_dtss>=1),yax_sym3(unst_po_dtss>=1),'-','Color',clrs(4,:),lwidth{:});
 p14egn=plot(x_taus_po_dtss(itss),yax_sym3(itss),'^','Color',[1 0 1],'MarkerSize',16,'MarkerFaceColor',[1 0 1]);
 pltnan3=plot(NaN,NaN,'Color',[1,1,1]);
 
 plt_hpf=plot(x_taus_po_dt(1),yax_sym(1),'s','Marker', 's', 'MarkerSize', 18, ...
     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
-legend_text={'stable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','stable POs: $\Pi\sim (13)_{0}(24)_{0}$  $\&$   $\Pi\sim (13)_{1/2}(24)_{1/2}$',...
-    'unstable POs: $\Pi\sim (123)_{0}$', 'symmetry-breaking POs','equivariant Hopf-bifurcation'};
-vec_plt=[plt_pod1stb(1),plt_pod1unstb(1),plt_pod2unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
+% legend_text={sprintf('stable POs: $\Pi\sim (1234)_{1/4}$'),sprintf('unstable POs: $\Pi\sim (1234)_{1/4}$'),sprintf('stable POs: $\Pi\sim (13)_{0}(24)_{0}$  $\&$   $\Pi\sim (13)_{1/2}(24)_{1/2}$'),...
+%     sprintf('unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$'),sprintf('unstable POs: $\Pi\sim (123)_{0}$'), sprintf('symmetry-breaking POs'),sprintf('equivariant Hopf-bifurcation')};
+legend_text={'stable POs: $M_{\alpha}\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','stable POs: $\Pi\sim (13)_{0}(24)_{0} (12)_{1/2}(34)_{1/2}$',...
+             'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$','unstable POs: $\Pi\sim (123)_{0}$', 'symmetry-breaking POs','equivariant Hopf-bifurcation'};
+
+vec_plt=[plt_pod1stb(1),plt_pod1unstb(1),plt_pod2unstb(1),plt_pod4unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
 legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','northwestoutside')
-xlabel('$\tau_c$','FontSize',30,'Interpreter','latex')
-set(gca,'LineWidth',2,'Box','on','FontWeight','bold','XTick',[],'YTick',[-2,0,2])
+set(gca,'LineWidth',2,'Box','on','FontWeight','bold','YTick',[-2,0,2],'FontSize',14)
+xlabel('$\tau_c$','Interpreter','latex','FontSize',30)
 % Plot time profile PO~ (1234)_{1/4}
 nexttile([2,2])
 hold on;
@@ -121,8 +127,8 @@ p4=psol_dtss.point(itss);
 pl4=plot(NaN,NaN,'^','Color',[1,0,1],'MarkerSize',16,'MarkerFaceColor',[1 0 1]);
 px2=plot(p4.mesh*p4.period,p4.profile(2,:),'o','Color',clrs(2,:),'LineWidth',1.5,'MarkerSize',10);
 px1=plot(p4.mesh*p4.period,p4.profile(1,:),'-','Color',clrs(1,:),'LineWidth',5,'MarkerSize',12);
-px3=plot(p4.mesh*p4.period,p4.profile(3,:),'-.','Color',clrs(3,:),'LineWidth',2)
-px4=plot(p4.mesh*p4.period,p4.profile(4,:),'-','Color',clrs(4,:),'LineWidth',3)
+px3=plot(p4.mesh*p4.period,p4.profile(3,:),'-.','Color',clrs(3,:),'LineWidth',2);
+px4=plot(p4.mesh*p4.period,p4.profile(4,:),'-','Color',clrs(4,:),'LineWidth',3);
 set(gca,'LineWidth',2,'Box','on','FontSize',14,'FontWeight','bold','YTick',[])
 xtext_leg={'$P_4$','$x_1$', '$x_2$','$x_3$','$x_4$'};
 xtext_vec=[pl4(1),px1,px2,px3,px4];
