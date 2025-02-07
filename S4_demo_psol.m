@@ -3,7 +3,7 @@
 %
 %%
 clear;
-ddebiftool_path([getenv('HOME'),'/sourceforge-ddebiftool/releases/git-2023-06-27']);
+ddebiftool_path([pwd(),'/ddebiftool-snapshot-2025-02-07']);
 format compact
 format short g
 %% Define system of equations of 4 coupled scalar oscillators
@@ -15,25 +15,10 @@ n_osc=4;
 parnames={'a','c_ext','delta','tau_s','tau_c'};
 cind=[parnames;num2cell(1:length(parnames))];
 ip=struct(cind{:});
-Cmat=ones(n_osc,n_osc)-n_osc*eye(n_osc);
-on=ones(n_osc,1);
-tau=@(x,i)reshape(x(:,i+1,:),n_osc,[]);
-f=@(x,a,c,d)d(on,:)-a(on,:).*tau(x,1)-tau(x,0).^3+c(on,:).*(Cmat*tau(x,2));
-df=@(x,a,c,d,dx,da,dc,dd)dd(on,:)-da(on,:).*tau(x,1)-a(on,:).*tau(dx,1)-...
-    3*tau(x,0).^2.*tau(dx,0)+dc(on,:).*(Cmat*tau(x,2))+c(on,:).*(Cmat*tau(dx,2));
-df2=@(x,a,c,d,dx,da,dc,dd)-2*da(on,:).*tau(dx,1)-6*tau(x,0).*tau(dx,0).^2+2*dc(on,:).*(Cmat*tau(dx,2));
-fxp=@(x,p)f(x,p(ip.a,:),p(ip.c_ext,:),p(ip.delta,:));
-dfxp=@(x,p,dx,dp)df(x,p(ip.a,:),p(ip.c_ext,:),p(ip.delta,:),...
-    dx,dp(ip.a,:),dp(ip.c_ext,:),dp(ip.delta,:));
-d2fxp=@(x,p,dx,dp)df2(x,p(ip.a,:),p(ip.c_ext,:),p(ip.delta,:),...
-    dx,dp(ip.a,:),dp(ip.c_ext,:),dp(ip.delta,:));
-rs=@(p)reshape(p,size(p,2),size(p,3));
-funcs=set_funcs('wrap_rhs', @(x,p)fxp( x,rs(p)),...
-    'wrap_dirderi', {@(x,p,dx,dp)dfxp( x,rs(p),dx,rs(dp)),...
-                    @(x,p,dx,dp)d2fxp(x,rs(p),dx,rs(dp))},...
-    'sys_tau',@()[ip.tau_s,ip.tau_c],...
-    'x_vectorized',true,'p_vectorized',true);
-%funcs=set_symfuncs(@sym_oscillators, 'sys_tau',@()[ip.tau_s,ip.tau_c]);
+funcs=set_funcs('wrap_rhs',@(x,p)rhs_coupled_oscillators(0,ip,n_osc,x,p),...
+    'wrap_dirderi',{@(x,p,dx,dp)rhs_coupled_oscillators(1,ip,n_osc,x,p,dx,dp),...
+                    @(x,p,dx,dp)rhs_coupled_oscillators(2,ip,n_osc,x,p,dx,dp)},...
+    'sys_tau',@()[ip.tau_s,ip.tau_c],'x_vectorized',true,'p_vectorized',true);
 %% Initial guess and parameters
 % For periodic orbits we look at the case of diffusive coupling with
 % $c_\mathrm{ext}>0$, where the near-origin equilibrium is stable for small delays.

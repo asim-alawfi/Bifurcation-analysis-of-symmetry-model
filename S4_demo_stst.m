@@ -3,7 +3,7 @@
 %
 %%
 clear;
-ddebiftool_path([getenv('HOME'),'/sourceforge-ddebiftool/releases/git-2023-06-27']);
+ddebiftool_path([pwd(),'/ddebiftool-snapshot-2025-02-07']);
 format compact
 format short g
 %% Define system of equations of 4 coupled scalar oscillators
@@ -12,15 +12,12 @@ format short g
 % $$ x_i(t)=\delta-a x_i(t-\tau_s)-x_i^3-c_\mathrm{ext}\sum_{j\neq i}x_j(t-\tau_c)-x_i(t-tau_c)$$
 %
 n_osc=4;
-Cmat=ones(n_osc,n_osc)-n_osc*eye(n_osc);
-on=ones(n_osc,1);
 parnames={'a','c_ext','delta','tau_s','tau_c'};
 cind=[parnames;num2cell(1:length(parnames))];
 ip=struct(cind{:});
-tau=@(x,i)reshape(x(:,i+1,:),n_osc,[]);
-f=@(x,a,c,delta)delta(on,:)-a(on,:).*tau(x,1)-tau(x,0).^3+c(on,:).*(Cmat*tau(x,2));
-rs=@(f)@(x,p)f(x,reshape(p,size(p,[2,3])));
-funcs=set_funcs('sys_rhs',rs(@(x,p)f(x,p(ip.a,:),p(ip.c_ext,:),p(ip.delta,:))),...
+funcs=set_funcs('wrap_rhs',@(x,p)rhs_coupled_oscillators(0,ip,n_osc,x,p),...
+    'wrap_dirderi',{@(x,p,dx,dp)rhs_coupled_oscillators(1,ip,n_osc,x,p,dx,dp),...
+                    @(x,p,dx,dp)rhs_coupled_oscillators(2,ip,n_osc,x,p,dx,dp)},...
     'sys_tau',@()[ip.tau_s,ip.tau_c],'x_vectorized',true,'p_vectorized',true);
 %% Initial guess and parameters
 % For symmetry breaking of equilibria we look at the case
@@ -28,9 +25,9 @@ funcs=set_funcs('sys_rhs',rs(@(x,p)f(x,p(ip.a,:),p(ip.c_ext,:),p(ip.delta,:))),.
 x0=0.05*ones(n_osc,1);
 par([ip.a,    ip.c_ext, ip.delta, ip.tau_s,  ip.tau_c])=...
     [n_osc+1,   -1,         0,      0.025,     0.02];
-res=f(x0(:,[1,1,1]),par(ip.a),par(ip.c_ext),par(ip.delta));
+res=funcs.wrap_rhs(x0(:,[1,1,1]),par);
 par(ip.delta)=-res(1);
-res0=norm(f(x0(:,[1,1,1]),par(ip.a),par(ip.c_ext),par(ip.delta)))
+res0=norm(funcs.wrap_rhs(x0(:,[1,1,1]),par))
 %% Parameter ranges
 parbd={'min_bound',[ip.a,-n_osc;ip.c_ext,-2;ip.tau_s,0; ip.tau_c,0],...
     'max_bound',[ip.a,n_osc+6;ip.c_ext,3;ip.tau_s,3; ip.tau_c,5],...
@@ -138,7 +135,7 @@ eq_sb2=br_contn(fun_sb2,eq_sb2,100,'ax',ax2);
     'printlevel',1,'print_residual_info',0,'min_iterations',5,'output','branch',...
     'locate_trivial',@(p)[0,0]);
 %% Continue 2nd secondary symmetry breaking in 2 parameters
-[fun_sb3,eq_sb3,suc]=SetupFold(funcs,eq_123ref,eq_123bifind(6),...
+[fun_sb3,eq_sb3,suc]=SetupFold(funcs,eq_123ref,eq_123bifind(end),...
     'initcond',cnd_sb2,'usercond',cnd_sb2,'outputfuncs',true,...
     'contpar',[ip.a,ip.c_ext],'dir',ip.a,'step',0.1,'print_residual_info',1);
 fprintf('Initialize two-parameter continuation of secondary symmetry breaking\n');
@@ -151,8 +148,7 @@ eq_sb3=br_contn(fun_sb2,eq_sb3,100,'ax',ax2);
     'printlevel',1,'print_residual_info',0,'min_iterations',5,'output','branch',...
     'locate_trivial',@(p)[0,0]);
 %% Continue third symmetry breaking in 2 parameters
-cnd_sb3=[permfix('stst','pv12',n_osc,'v','perm',[1,2]),...
-         permfix('stst','px12',n_osc,'x','perm',[1,2]),...
+cnd_sb3=[permfix('stst','px12',n_osc,'x','perm',[1,2]),...
          permfix('stst','px34',n_osc,'x','perm',[3,4])];
 [fun_sb4,eq_sb4,suc]=SetupFold(funcs,eq_12_34ref,eq_12_34bifind(1),...
     'initcond',cnd_sb3,'usercond',cnd_sb3,'outputfuncs',true,...
