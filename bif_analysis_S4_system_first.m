@@ -162,19 +162,21 @@ hopf_branch_dt=br_contn(fhopf_dt,hopf_branch_dt,250);
 x_taus_hf_dt=arrayfun(@(x)x.parameter(in.tau_s),hopf_branch_dt.point);
 x_tauc_hf_dt=arrayfun(@(x)x.parameter(in.tau_c),hopf_branch_dt.point);
 %%
-figure(33)
+hopf_stab_change=find(diff(unst_hopf_dt));
+figure(30)
 clf;
 %%%%% Hopf Bifurcation%%%%%%%%
 hold on; grid on
-plot(x_tauc_hf_dt(unst_hopf_dt==0),x_taus_hf_dt(unst_hopf_dt==0),'k.','LineWidth',4)
-plot(x_tauc_hf_dt(unst_hopf_dt>=1),x_taus_hf_dt(unst_hopf_dt>=1),'r.','MarkerSize',10)
-plt_hpf_dt=plot(par_axcdt(indbifcdt),branch0_tauc_dt_bis.point(10).parameter(in.tau_s),'s','Marker', 's', 'MarkerSize', 12, ...
+hpstable=plot(x_tauc_hf_dt(unst_hopf_dt==0),x_taus_hf_dt(unst_hopf_dt==0),'k.','LineWidth',3);
+hpunstable=plot(x_tauc_hf_dt(unst_hopf_dt>=1),x_taus_hf_dt(unst_hopf_dt>=1),'r.','LineWidth',3);
+plt_hpf_dt=plot(par_axcdt(indbifcdt),branch0_tauc_dt_bis.point(10).parameter(in.tau_s),'s','Marker', 's', 'MarkerSize', 16, ...
     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
-legend('Hopf-bifurcation','starting point','Interpreter','latex')
+hp_text={'stable equivariant Hopf-bifurcation','unstable equivariant Hopf-bifurcation','starting point'};
+hp_pltvec=[hpstable(1),hpunstable(1),plt_hpf_dt(1)];
+legend(hp_pltvec,hp_text,'Interpreter','latex')
 ylabel('$\tau_{s}$','Interpreter','latex')
 xlabel('$\tau_{c}$','Interpreter','latex')
-title('(b)')
-set(gca, 'FontSize',30,'FontWeight','bold','FontName','Courier','LineWidth',2,'Box', 'on')
+set(gca, 'FontSize',20,'FontWeight','bold','LineWidth',2,'Box', 'on')
 hopf_branch_dt=br_remove_extracolumns(hopf_branch_dt);
 psol_dt=br_remove_extracolumns(psol_dt);
 %%

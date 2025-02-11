@@ -68,7 +68,8 @@ plt_hpf=plot(x_taus_po_dt(1),yax_sym(1),'s','Marker', 's', 'MarkerSize', 18, ...
     'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
 % legend_text={sprintf('stable POs: $\Pi\sim (1234)_{1/4}$'),sprintf('unstable POs: $\Pi\sim (1234)_{1/4}$'),sprintf('stable POs: $\Pi\sim (13)_{0}(24)_{0}$  $\&$   $\Pi\sim (13)_{1/2}(24)_{1/2}$'),...
 %     sprintf('unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$'),sprintf('unstable POs: $\Pi\sim (123)_{0}$'), sprintf('symmetry-breaking POs'),sprintf('equivariant Hopf-bifurcation')};
-legend_text={'stable POs: $M_{\alpha}\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','stable POs: $\Pi\sim (13)_{0}(24)_{0} (12)_{1/2}(34)_{1/2}$',...
+
+legend_text={'stable POs: $M_{\alpha}\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','stable POs: $\Pi\sim (13)_{0}(24)_{0} (12)(34)_{1/2}$',...
              'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$','unstable POs: $\Pi\sim (123)_{0}$', 'symmetry-breaking POs','equivariant Hopf-bifurcation'};
 
 vec_plt=[plt_pod1stb(1),plt_pod1unstb(1),plt_pod2unstb(1),plt_pod4unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
@@ -136,3 +137,21 @@ legend(xtext_vec,xtext_leg,'Interpreter','latex','FontSize',23,'location','north
 ylim([-3,3])
 xlim([0,p4.period])
 set(gca, 'FontSize',14,'FontWeight','bold','LineWidth',2,'Box', 'on')
+%% Hopf Bifurcation
+hopf_stab_change=find(diff(unst_hopf_dt));
+figure(33)
+clf;
+%%%%% Hopf Bifurcation%%%%%%%%
+hold on; grid on
+hpstable=plot(x_tauc_hf_dt(hopf_stab_change(1):hopf_stab_change(2)),x_taus_hf_dt(hopf_stab_change(1):hopf_stab_change(2)),'-','color',clrs(1,:),'LineWidth',3);
+plot(x_tauc_hf_dt(hopf_stab_change(3):end),x_taus_hf_dt(hopf_stab_change(3):end),'-','color',clrs(1,:),'LineWidth',4)
+hpunstable=plot(x_tauc_hf_dt(1:hopf_stab_change(1)),x_taus_hf_dt(1:hopf_stab_change(1)),'k-.','LineWidth',3);
+plot(x_tauc_hf_dt(hopf_stab_change(2):hopf_stab_change(3)),x_taus_hf_dt(hopf_stab_change(2):hopf_stab_change(3)),'k-.','LineWidth',3)
+plt_hpf_dt=plot(par_axcdt(indbifcdt),branch0_tauc_dt_bis.point(10).parameter(in.tau_s),'s','Marker', 's', 'MarkerSize', 16, ...
+    'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black');
+hp_text={'stable','unstable','starting point'};
+hp_pltvec=[hpstable(1),hpunstable(1),plt_hpf_dt(1)];
+legend(hp_pltvec,hp_text,'Interpreter','latex','FontSize',25)
+set(gca, 'FontSize',10,'FontWeight','bold','LineWidth',2,'Box', 'on')
+ylabel('$\tau_{s}$','Interpreter','latex','FontSize',24,'FontWeight','bold')
+xlabel('$\tau_{c}$','Interpreter','latex','FontSize',24,'FontWeight','bold')

@@ -11,11 +11,6 @@ addpath([base,'ddebiftool'],...
 load('bif_analysis_S4_system_first.mat')
 %% Permutation (13)(24) time shift=0
 % M_13_24=[0,0,1,0; 0,0,0,1; 1,0,0,0; 0,1,0,0]; %(13)(24)
-% pmfixs1=dde_stst_lincond('pmfix',nx,'v','trafo',M_13_24,'rotation',[0,1]);
-% psfixs1=dde_psol_lincond('psfix',nx,'profile','trafo',M_13_24,'shift',[0,1],'condprojint',linspace(0.0,0.2,2)'*[1,1]);
-% [fpsol_dts1,psol_dts1,sucp_dts1]=SetupPsol(funcs_cdt,branch0_tauc_dt_bis,indbifcdt,'contpar',in.tau_c,'extracolumns','auto',...
-%     'initcond',pmfixs1,'outputfuncs',true,'extra_condition',true,'usercond',psfixs1,'intervals',60,'degree',4,...
-%      parbd_c{:},'print_residual_info',1,'matrix','sparse','remesh',false);
 %%
 M_13_24=[0,0,1,0; 0,0,0,1; 1,0,0,0; 0,1,0,0]; %(13)(24)
 M_13_24_shift=[0,1,0,0; 1,0,0,0; 0,0,0,1; 0,0,1,0]; %(12)(34)
