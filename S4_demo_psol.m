@@ -203,3 +203,17 @@ svtor2=SetupTorusBifurcation(funcs,spsolcref,indbif,torargs2{:},'output','sv','n
 figure(2);
 trbr=br_contn(trfuncs,trbr,70,'ax',ax2);
 [trbr,trnunst]=br_stabl(trfuncs,trbr);
+%%
+psol.p1234_1_4=br_remove_extracolumns(psol.p1234_1_4);
+psol.p12_0_1_34_1_2=br_remove_extracolumns(psol.p12_0_1_34_1_2);
+psol.p123_0_1=br_remove_extracolumns(psol.p123_0_1);
+psol.p1234_1_4=br_remove_extracolumns(psol.p1234_1_4);
+ehopf=br_remove_extracolumns(ehopf);
+pfbr=br_remove_extracolumns(pfbr);
+eq_1234s=br_remove_extracolumns(eq_1234s);
+shopf=br_remove_extracolumns(shopf);
+spsol=br_remove_extracolumns(spsol);
+spsolc=br_remove_extracolumns(spsolc);
+trbr=br_remove_extracolumns(trbr);
+%%
+save('S4_demo_psol_results.mat')
