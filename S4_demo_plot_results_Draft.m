@@ -104,7 +104,12 @@ pplt2=plot(x_p123_0_1(it2),y_p123_0_1(it2),'^','Color',[0 0.6 0],'MarkerSize',12
 [~,it3]=min(abs(x_p12_0_1_34_1_2-3.5));
 plt_p12_0_1_34_1_2=plot(x_p12_0_1_34_1_2,y_p12_0_1_34_1_2,'color',clrs(3,:),lwidth{:});
 plt3=plot(x_p12_0_1_34_1_2(it3),y_p12_0_1_34_1_2(it3),'r^','MarkerSize',12,'MarkerFaceColor','r');
-%plot(x_p12_0_1_34_0_1,y_p12_0_1_34_0_1,'color',clrs(4,:),lwidth{:});
+
+
+%
+[~,it4]=min(abs(x_p12_0_1_34_0_1-3.5));
+plt_p12_0_1_34_0_1=plot(x_p12_0_1_34_0_1,y_p12_0_1_34_0_1,'color',clrs(4,:),lwidth{:});
+plt4=plot(x_p12_0_1_34_0_1(it4),y_p12_0_1_34_0_1(it4),'m^','MarkerSize',12,'MarkerFaceColor','m');
 %%%%%%%%%%%%%
 legend_text={'stable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (123)_{0}$',...
     'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$'}%,...
@@ -149,16 +154,31 @@ nexttile([2,2])
 hold on; 
 p3=psolref.p12_0_1_34_1_2.point(it3);
 pl4=plot(NaN,NaN,'r^','MarkerSize',12,'MarkerFaceColor','r');
-px2=plot(p3.mesh*p3.period,p3.profile(2,:),'o','Color',clrs(2,:),'LineWidth',1.5,'MarkerSize',10);
-px1=plot(p3.mesh*p3.period,p3.profile(1,:),'-','Color',clrs(1,:),'LineWidth',5,'MarkerSize',12);
-px3=plot(p3.mesh*p3.period,p3.profile(3,:),'-.','Color',clrs(3,:),'LineWidth',2);
-px4=plot(p3.mesh*p3.period,p3.profile(4,:),'-','Color',clrs(4,:),'LineWidth',3);
+px2=plot(p3.mesh*p3.period,p3.profile(2,:),'o','Color',clrs(2,:),'LineWidth',1,'MarkerSize',5);
+px1=plot(p3.mesh*p3.period,p3.profile(1,:),'.','Color',clrs(1,:),'LineWidth',5,'MarkerSize',12);
+px3=plot(p3.mesh*p3.period,p3.profile(3,:),'x','Color',clrs(3,:),'LineWidth',1);
+px4=plot(p3.mesh*p3.period,p3.profile(4,:),'s','Color',clrs(4,:),'LineWidth',1);
 set(gca,'LineWidth',2,'Box','on','FontSize',14,'FontWeight','bold','YTick',[])
-xtext_leg={'$P_4$','$x_1$', '$x_2$','$x_3$','$x_4$'};
+xtext_leg={'$P_3$','$x_1$', '$x_2$','$x_3$','$x_4$'};
 xtext_vec=[pl4(1),px1,px2,px3,px4];
 legend(xtext_vec,xtext_leg,'Interpreter','latex','FontSize',23,'location','northeastoutside')
 ylim([-3,3])
 xlim([0,p3.period])
 set(gca, 'FontSize',14,'FontWeight','bold','LineWidth',2,'Box', 'on')
 
+nexttile([2,2])
+hold on; 
+p4=psolref.p12_0_1_34_0_1.point(it4);
+pl4=plot(NaN,NaN,'m^','MarkerSize',12,'MarkerFaceColor','m');
+px2=plot(p4.mesh*p4.period,p4.profile(2,:),'o','Color',clrs(2,:),'LineWidth',1.5,'MarkerSize',10);
+px1=plot(p4.mesh*p4.period,p4.profile(1,:),'-','Color',clrs(1,:),'LineWidth',5,'MarkerSize',12);
+px3=plot(p4.mesh*p4.period,p4.profile(3,:),'x','Color',clrs(3,:),'LineWidth',1);
+px4=plot(p4.mesh*p4.period,p4.profile(4,:),'s','Color',clrs(4,:),'LineWidth',1);
+set(gca,'LineWidth',2,'Box','on','FontSize',14,'FontWeight','bold','YTick',[])
+xtext_leg={'$P_4$','$x_1$', '$x_2$','$x_3$','$x_4$'};
+xtext_vec=[pl4(1),px1,px2,px3,px4];
+legend(xtext_vec,xtext_leg,'Interpreter','latex','FontSize',23,'location','northeastoutside')
+ylim([-3,3])
+xlim([0,p4.period])
+set(gca, 'FontSize',14,'FontWeight','bold','LineWidth',2,'Box', 'on')
 %%
