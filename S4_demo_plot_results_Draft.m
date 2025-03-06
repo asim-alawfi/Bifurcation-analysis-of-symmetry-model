@@ -112,10 +112,10 @@ plt_p12_0_1_34_0_1=plot(x_p12_0_1_34_0_1,y_p12_0_1_34_0_1,'color',clrs(4,:),lwid
 plt4=plot(x_p12_0_1_34_0_1(it4),y_p12_0_1_34_0_1(it4),'m^','MarkerSize',12,'MarkerFaceColor','m');
 %%%%%%%%%%%%%
 legend_text={'stable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (1234)_{1/4}$','unstable POs: $\Pi\sim (123)_{0}$',...
-    'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$'}%,...
+    'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$','unstable POs: $\Pi\sim (12)_{0}(34)_{0}$'}%,...
             % 'unstable POs: $\Pi\sim (12)_{0}(34)_{1/2}$','unstable POs: $\Pi\sim (123)_{0}$', 'symmetry-breaking POs','equivariant Hopf-bifurcation'};
 
-vec_plt=[plt_1234_14(1),plt_1234_14uns(1),plt_123_01(1),plt_p12_0_1_34_1_2(1)]%,plt_pod4unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
+vec_plt=[plt_1234_14(1),plt_1234_14uns(1),plt_123_01(1),plt_p12_0_1_34_1_2(1),plt_p12_0_1_34_0_1]%,plt_pod4unstb(1),plt_pod3unst(1),sym_bif(1),plt_hpf(1)];%,p1legn(1),p12egn(1),p13egn(1),p14egn(1)];
 legend(vec_plt,legend_text,'Interpreter','latex','FontSize',24,'Location','northwestoutside')
 set(gca,'LineWidth',2,'Box','on','FontWeight','bold','YTick',[-2,0,2],'FontSize',14)
 xlabel('$\tau_c$','Interpreter','latex','FontSize',30)
