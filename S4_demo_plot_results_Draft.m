@@ -8,6 +8,7 @@ clear;
 %     [base,'ddebiftool_extra_nmfm'],...
 %     [base,'ddebiftool_extra_symbolic'],...
 %     [base,'ddebiftool_coco']);
+% try 
 ddebiftool_path([pwd(),'/ddebiftool-snapshot-2025-02-07']);
 format compact
 format short g
